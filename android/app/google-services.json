@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "49430381094",
+    "project_id": "mynotes-a1859",
+    "storage_bucket": "mynotes-a1859.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49430381094:android:bd0edb74de469557839ce7",
+        "android_client_info": {
+          "package_name": "com.imadlol.mynotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBec_c5F2YGzKU4AMaK2FqXDOkr54LEWp4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
