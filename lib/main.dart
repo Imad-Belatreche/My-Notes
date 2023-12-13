@@ -31,7 +31,15 @@ class _ConnectonDoneState extends State<ConnectonDone> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(child: Text('Connection Done Successfully ✅')),
+      body: Center(
+          child: Text(
+        'Connection Done Successfully ✅',
+        style: TextStyle(
+          color: Colors.deepPurple,
+          fontFamily: 'JetBrains Mono',
+          fontSize: 25,
+        ),
+      )),
     );
   }
 }
