@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mynotes/views/register_view.dart';
+import 'dart:developer' show log;
+
+bool isPassword = true;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -57,10 +59,19 @@ class _LoginViewState extends State<LoginView> {
                 controller: _password,
                 autocorrect: false,
                 enableSuggestions: false,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+                obscureText: isPassword,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
                   labelText: 'Password',
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isPassword = !isPassword;
+                      });
+                    },
+                    icon: Icon(
+                        isPassword ? Icons.visibility : Icons.visibility_off),
+                  ),
                 ),
               ),
             ),
@@ -72,15 +83,16 @@ class _LoginViewState extends State<LoginView> {
                     final userCredential = await FirebaseAuth.instance
                         .signInWithEmailAndPassword(
                             email: email, password: password);
-                    print(userCredential);
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/notes/', (_) => false);
+                    log(userCredential.toString());
                   } on FirebaseAuthException catch (e) {
                     if (e.code == 'invalid-credential') {
-                      print(
-                          'Invalid Credential (wrong email, password) Or User Not found');
-                      print(e.message);
+                      log('Invalid Credential (wrong email, password) Or User Not found');
+                      log(e.message.toString());
                     } else {
-                      print('SOMTHING ELSE HAPPEND');
-                      print(e.message);
+                      log('SOMTHING ELSE HAPPEND');
+                      log(e.message.toString());
                     }
                   }
                 },

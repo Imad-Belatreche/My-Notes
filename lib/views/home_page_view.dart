@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/firebase_options.dart';
-import 'package:mynotes/main.dart';
 import 'package:mynotes/views/email_verification_view.dart';
 import 'package:mynotes/views/login_view.dart';
+import 'package:mynotes/views/notes_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,14 +25,13 @@ class _HomePageState extends State<HomePage> {
               final user = FirebaseAuth.instance.currentUser;
               if (user != null) {
                 if (user.emailVerified) {
-                  print('Email verified');
+                  return const NotesView();
                 } else {
                   return const EmailVerificationView();
                 }
               } else {
                 return const LoginView();
               }
-              return const ConnectonDone();
             default:
               return Container(
                   alignment: Alignment.center,

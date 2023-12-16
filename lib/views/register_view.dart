@@ -1,9 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mynotes/firebase_options.dart';
-import 'package:mynotes/views/welcome_view.dart';
-import 'package:page_transition/page_transition.dart';
+import 'dart:developer' show log;
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -71,22 +68,24 @@ class _RegisterViewState extends State<RegisterView> {
                     final userCredential = await FirebaseAuth.instance
                         .createUserWithEmailAndPassword(
                             email: email, password: password);
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/verify/', (_) => false);
 
-                    print(userCredential);
+                    log(userCredential.toString());
                   } on FirebaseAuthException catch (e) {
                     if (e.code == 'email-already-in-use') {
-                      print('Email is already in use.');
-                      print(e.message);
+                      log('Email is already in use.');
+                      log(e.message.toString());
                     } else if (e.code == 'weak-password') {
-                      print('Weak password.');
-                      print(e.message);
+                      log('Weak password.');
+                      log(e.message.toString());
                     } else if (e.code == 'invalid-email') {
-                      print('Invalid Email');
-                      print(e.message);
+                      log('Invalid Email');
+                      log(e.message.toString());
                     } else {
-                      print('SOMTHING BAD HAPPEND');
-                      print(e.message);
-                      print(e.code);
+                      log('SOMTHING BAD HAPPEND');
+                      log(e.message.toString());
+                      log(e.code.toString());
                     }
                   }
                 },

@@ -12,7 +12,17 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Verify your email to continue')),
+      appBar: AppBar(
+        title: const Text('Verify your email to continue'),
+        actions: [
+          BackButton(
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/login/', (route) => false);
+            },
+          )
+        ],
+      ),
       body: Column(
         children: [
           const Center(child: Text('Please verify your email address')),

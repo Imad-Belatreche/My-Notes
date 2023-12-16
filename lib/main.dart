@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mynotes/home_page.dart';
+import 'package:mynotes/views/home_page_view.dart';
+import 'package:mynotes/views/email_verification_view.dart';
 import 'package:mynotes/views/login_view.dart';
+import 'package:mynotes/views/notes_view.dart';
 import 'package:mynotes/views/register_view.dart';
+import 'package:mynotes/views/settings_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +18,9 @@ void main() {
       routes: {
         '/login/': (context) => const LoginView(),
         '/register/': (context) => const RegisterView(),
+        '/notes/': (context) => const NotesView(),
+        '/verify/': (context) => const EmailVerificationView(),
+        '/settings/': (context) => const SettingsView()
       },
     ),
   );
@@ -33,13 +39,14 @@ class _ConnectonDoneState extends State<ConnectonDone> {
     return const Scaffold(
       body: Center(
           child: Text(
-        'Connection Done Successfully ✅',
+        'Connection Done Successfully',
         style: TextStyle(
-          color: Colors.deepPurple,
+          color: Colors.white,
           fontFamily: 'JetBrains Mono',
           fontSize: 25,
         ),
       )),
+      backgroundColor: Colors.deepPurple,
     );
   }
 }

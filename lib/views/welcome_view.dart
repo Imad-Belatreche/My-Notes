@@ -10,12 +10,13 @@ class WelcomeView extends StatefulWidget {
 class _WelcomeViewState extends State<WelcomeView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Welcome to My Notes'),
-      ),
-      body: const Text(
-          'You are doing a good thing to use my first flutter app 😄'),
+    return const Column(
+      children: [
+        Text(
+          'You are doing a good thing to use my first flutter app 😄',
+          style: TextStyle(fontSize: 20),
+        ),
+      ],
     );
   }
 }
