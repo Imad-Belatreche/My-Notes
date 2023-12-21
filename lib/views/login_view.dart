@@ -70,39 +70,51 @@ class _LoginViewState extends State<LoginView> {
                       });
                     },
                     icon: Icon(
-                        isPassword ? Icons.visibility : Icons.visibility_off),
+                      isPassword ? Icons.visibility : Icons.visibility_off,
+                    ),
                   ),
                 ),
               ),
             ),
             TextButton(
-                onPressed: () async {
-                  final email = _email.text;
-                  final password = _password.text;
-                  try {
-                    final userCredential = await FirebaseAuth.instance
-                        .signInWithEmailAndPassword(
-                            email: email, password: password);
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/notes/', (_) => false);
-                    log(userCredential.toString());
-                  } on FirebaseAuthException catch (e) {
-                    if (e.code == 'invalid-credential') {
-                      log('Invalid Credential (wrong email, password) Or User Not found');
-                      log(e.message.toString());
-                    } else {
-                      log('SOMTHING ELSE HAPPEND');
-                      log(e.message.toString());
-                    }
+              onPressed: () async {
+                final email = _email.text;
+                final password = _password.text;
+                try {
+                  await FirebaseAuth.instance
+                      .signInWithEmailAndPassword(
+                    email: email,
+                    password: password,
+                  )
+                      .then((userCredential) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/notes/',
+                      (routes) => false,
+                    );
+                    log(
+                      userCredential.toString(),
+                    );
+                  });
+                } on FirebaseAuthException catch (e) {
+                  if (e.code == 'invalid-credential') {
+                    log('Invalid Credential (wrong email, password) Or User Not found');
+                    log(e.message.toString());
+                  } else {
+                    log('SOMTHING ELSE HAPPEND');
+                    log(e.message.toString());
                   }
-                },
-                child: const Text('Login')),
+                }
+              },
+              child: const Text('Login'),
+            ),
             TextButton(
                 onPressed: () {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil('/register/', (route) => false);
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/register/',
+                    (route) => false,
+                  );
                 },
-                child: const Text('Not registerd yet? Click here to register'))
+                child: const Text('Not registerd yet? Click here to register')),
           ],
         ),
       ),

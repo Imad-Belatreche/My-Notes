@@ -26,7 +26,9 @@ class _SettingsViewState extends State<SettingsView> {
             ),
           ],
           backgroundColor: Colors.deepPurple),
-      body: const Column(children: [Text('Setting 1: ')]),
+      body: const Column(children: [
+        Text('Setting 1: '),
+      ]),
     );
   }
 }

@@ -30,24 +30,38 @@ class _NotesViewState extends State<NotesView> {
                 case MenuAction.logout:
                   final shouldLogout = await showLogOutDialog(context);
                   if (shouldLogout) {
-                    await FirebaseAuth.instance.signOut();
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/login/', (_) => false);
+                    await FirebaseAuth.instance.signOut().then((value) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/login/', (routes) => false);
+                    });
                   }
                 case MenuAction.settings:
                   Navigator.of(context)
-                      .pushNamedAndRemoveUntil('/settings/', (_) => false);
+                      .pushNamedAndRemoveUntil('/settings/', (routes) => false);
                 default:
               }
             },
             itemBuilder: (context) {
               return const [
                 PopupMenuItem<MenuAction>(
-                    value: MenuAction.logout, child: Text('Log out')),
+                  value: MenuAction.logout,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(Icons.logout),
+                      Text('Log Out'),
+                    ],
+                  ),
+                ),
                 PopupMenuItem<MenuAction>(
-                  value: MenuAction.settings,
-                  child: Text('Settings'),
-                )
+                    value: MenuAction.settings,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(Icons.settings),
+                        Text('Settings'),
+                      ],
+                    ))
               ];
             },
           ),
