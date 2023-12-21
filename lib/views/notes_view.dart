@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/views/welcome_view.dart';
 
 enum MenuAction { logout, settings }
@@ -32,12 +33,16 @@ class _NotesViewState extends State<NotesView> {
                   if (shouldLogout) {
                     await FirebaseAuth.instance.signOut().then((value) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/login/', (routes) => false);
+                        loginRoute,
+                        (routes) => false,
+                      );
                     });
                   }
                 case MenuAction.settings:
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil('/settings/', (routes) => false);
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    settingsRoute,
+                    (routes) => false,
+                  );
                 default:
               }
             },

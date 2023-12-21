@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/views/home_page_view.dart';
 import 'package:mynotes/views/email_verification_view.dart';
 import 'package:mynotes/views/login_view.dart';
@@ -16,11 +17,11 @@ void main() {
       ),
       home: const HomePage(),
       routes: {
-        '/login/': (context) => const LoginView(),
-        '/register/': (context) => const RegisterView(),
-        '/notes/': (context) => const NotesView(),
-        '/verify/': (context) => const EmailVerificationView(),
-        '/settings/': (context) => const SettingsView()
+        loginRoute: (context) => const LoginView(),
+        registerRoute: (context) => const RegisterView(),
+        notesRoute: (context) => const NotesView(),
+        emailVerifyRoute: (context) => const EmailVerificationView(),
+        settingsRoute: (context) => const SettingsView()
       },
     ),
   );

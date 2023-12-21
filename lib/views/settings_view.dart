@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mynotes/constants/routes.dart';
 
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
@@ -20,8 +21,10 @@ class _SettingsViewState extends State<SettingsView> {
             BackButton(
               color: Colors.white,
               onPressed: () {
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/notes/', (route) => false);
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  notesRoute,
+                  (route) => false,
+                );
               },
             ),
           ],
