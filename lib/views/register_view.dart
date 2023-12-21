@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' show log;
-
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -32,7 +31,10 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Register'),
+        centerTitle: true,
+      ),
       body: Container(
         alignment: Alignment.center,
         child: Column(
@@ -47,7 +49,9 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: false,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: 'Email'),
+                  border: OutlineInputBorder(),
+                  labelText: 'Email',
+                ),
               ),
             ),
             SizedBox(
@@ -59,7 +63,9 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: false,
                 obscureText: true,
                 decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: 'Password'),
+                  border: OutlineInputBorder(),
+                  labelText: 'Password',
+                ),
               ),
             ),
             TextButton(
@@ -67,43 +73,56 @@ class _RegisterViewState extends State<RegisterView> {
                   final email = _email.text;
                   final password = _password.text;
                   try {
-                    await FirebaseAuth.instance
-                        .createUserWithEmailAndPassword(
-                            email: email, password: password)
-                        .then((userCredential) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        emailVerifyRoute,
-                        (routes) => false,
-                      );
-
-                      log(userCredential.toString());
-                    });
+                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                      email: email,
+                      password: password,
+                    );
+                    if (!context.mounted) return;
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      emailVerifyRoute,
+                      (routes) => false,
+                    );
                   } on FirebaseAuthException catch (e) {
+                    if (!context.mounted) return;
+
                     if (e.code == 'email-already-in-use') {
-                      log('Email is already in use.');
-                      log(e.message.toString());
+                      await showErrorDialog(
+                        context,
+                        'Email already in use',
+                      );
                     } else if (e.code == 'weak-password') {
-                      log('Weak password.');
-                      log(e.message.toString());
+                      await showErrorDialog(
+                        context,
+                        'Weak password',
+                      );
                     } else if (e.code == 'invalid-email') {
-                      log('Invalid Email');
-                      log(e.message.toString());
+                      await showErrorDialog(
+                        context,
+                        'Invalid email',
+                      );
                     } else {
-                      log('SOMTHING BAD HAPPEND');
-                      log(e.message.toString());
-                      log(e.code.toString());
+                      await showErrorDialog(
+                        context,
+                        'Oops... an expected error happend, please try again later (${e.code})',
+                      );
                     }
+                  } catch (e) {
+                    showErrorDialog(
+                      context,
+                      e.toString(),
+                    );
                   }
                 },
                 child: const Text('Register')),
             TextButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    loginRoute,
-                    (route) => false,
-                  );
-                },
-                child: const Text('Already have an account? Login here'))
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  loginRoute,
+                  (route) => false,
+                );
+              },
+              child: const Text('Already have an account? Login here'),
+            )
           ],
         ),
       ),

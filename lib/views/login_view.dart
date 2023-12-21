@@ -1,8 +1,8 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:developer' show log;
-
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/utilities/show_error_dialog.dart';
 
 bool isPassword = true;
 
@@ -52,7 +52,9 @@ class _LoginViewState extends State<LoginView> {
                 enableSuggestions: false,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: 'Email'),
+                  border: OutlineInputBorder(),
+                  labelText: 'Email',
+                ),
               ),
             ),
             SizedBox(
@@ -83,40 +85,73 @@ class _LoginViewState extends State<LoginView> {
                 final email = _email.text;
                 final password = _password.text;
                 try {
-                  await FirebaseAuth.instance
-                      .signInWithEmailAndPassword(
+                  await FirebaseAuth.instance.signInWithEmailAndPassword(
                     email: email,
                     password: password,
-                  )
-                      .then((userCredential) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      notesRoute,
-                      (routes) => false,
-                    );
-                    log(
-                      userCredential.toString(),
-                    );
-                  });
+                  );
+                  if (!context.mounted) return;
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    notesRoute,
+                    (routes) => false,
+                  );
                 } on FirebaseAuthException catch (e) {
-                  if (e.code == 'invalid-credential') {
-                    log('Invalid Credential (wrong email, password) Or User Not found');
-                    log(e.message.toString());
+                  if (!context.mounted) return;
+                  if (e.code == 'invalid-email') {
+                    await showErrorDialog(
+                      context,
+                      'Invalid email',
+                    );
+                  } else if (e.code == 'user-disabled') {
+                    await showErrorDialog(
+                      context,
+                      'This account is disabled',
+                    );
+                  } else if (e.code == 'user-not-found') {
+                    await showErrorDialog(
+                      context,
+                      'User not found',
+                    );
+                  } else if (e.code == 'wrong-password') {
+                    await showErrorDialog(
+                      context,
+                      'Wrong password',
+                    );
+                  } else if (e.code == 'invalid-credential') {
+                    await showErrorDialog(
+                      context,
+                      'Invalid credential, please check that your email and password are correct',
+                    );
+                  } else if (e.code == 'network-request-failed') {
+                    await showErrorDialog(
+                      context,
+                      'Network request failed, please connect to intrnet and try again',
+                    );
                   } else {
-                    log('SOMTHING ELSE HAPPEND');
-                    log(e.message.toString());
+                    await showErrorDialog(
+                      context,
+                      'Oops... an expected error happend, please try again later (${e.code})',
+                    );
+                    log(e.code);
                   }
+                } catch (e) {
+                  await showErrorDialog(
+                    context,
+                    e.toString(),
+                  );
+                  log(e.toString());
                 }
               },
               child: const Text('Login'),
             ),
             TextButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    registerRoute,
-                    (route) => false,
-                  );
-                },
-                child: const Text('Not registerd yet? Click here to register')),
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  registerRoute,
+                  (route) => false,
+                );
+              },
+              child: const Text('Not registerd yet? Click here to register'),
+            ),
           ],
         ),
       ),
