@@ -5,6 +5,7 @@ import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/utilities/show_error_dialog.dart';
 
 bool isPassword = true;
+bool isVerified = FirebaseAuth.instance.currentUser!.emailVerified;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -90,10 +91,32 @@ class _LoginViewState extends State<LoginView> {
                     password: password,
                   );
                   if (!context.mounted) return;
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    notesRoute,
-                    (routes) => false,
-                  );
+
+                  if (isVerified) {
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil(notesRoute, (routes) => false);
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Wait'),
+                          content: const Text(
+                            'Your Email is not verified yet. Check your email for a verification or click to send a new one',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () async {
+                                await FirebaseAuth.instance.currentUser!
+                                    .sendEmailVerification();
+                              },
+                              child: const Text('Send'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 } on FirebaseAuthException catch (e) {
                   if (!context.mounted) return;
                   if (e.code == 'invalid-email') {

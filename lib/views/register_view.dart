@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/utilities/show_error_dialog.dart';
 
+bool isPassword = true;
+
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
 
@@ -61,10 +63,20 @@ class _RegisterViewState extends State<RegisterView> {
                 controller: _password,
                 autocorrect: false,
                 enableSuggestions: false,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+                obscureText: isPassword,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
                   labelText: 'Password',
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isPassword = !isPassword;
+                      });
+                    },
+                    icon: Icon(
+                      isPassword ? Icons.visibility : Icons.visibility_off,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -78,10 +90,12 @@ class _RegisterViewState extends State<RegisterView> {
                       password: password,
                     );
                     if (!context.mounted) return;
-                    Navigator.of(context).pushNamedAndRemoveUntil(
+                    Navigator.of(context).pushNamed(
                       emailVerifyRoute,
-                      (routes) => false,
                     );
+
+                    final user = FirebaseAuth.instance.currentUser;
+                    await user?.sendEmailVerification();
                   } on FirebaseAuthException catch (e) {
                     if (!context.mounted) return;
 
@@ -107,6 +121,7 @@ class _RegisterViewState extends State<RegisterView> {
                       );
                     }
                   } catch (e) {
+                    if (!context.mounted) return;
                     showErrorDialog(
                       context,
                       e.toString(),

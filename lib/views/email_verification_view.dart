@@ -15,28 +15,29 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Verify your email to continue'),
-        actions: [
-          BackButton(
-            onPressed: () {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                loginRoute,
-                (route) => false,
-              );
-            },
-          )
-        ],
       ),
       body: Column(
         children: [
-          const Center(
-            child: Text('Please verify your email address'),
-          ),
+          const Text(
+              " We'v sent you an email verification. Please open it to verify your account"),
+          const Text(
+              "If you haven't received the verification email. Click here"),
           TextButton(
             onPressed: () async {
               final user = FirebaseAuth.instance.currentUser;
               await user?.sendEmailVerification();
             },
-            child: const Text('Send Email Verification'),
+            child: const Text('Send email verification'),
+          ),
+          TextButton(
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                registerRoute,
+                (route) => false,
+              );
+            },
+            child: const Text('Restart'),
           )
         ],
       ),
