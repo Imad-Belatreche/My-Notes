@@ -1,3 +1,4 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
@@ -43,28 +44,30 @@ class _RegisterViewState extends State<RegisterView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 80,
-              width: 250,
+              height: 75,
+              width: 275,
               child: TextField(
                 controller: _email,
                 autocorrect: false,
                 enableSuggestions: false,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
+                  icon: Icon(Icons.email),
                   border: OutlineInputBorder(),
                   labelText: 'Email',
                 ),
               ),
             ),
             SizedBox(
-              height: 80,
-              width: 250,
+              height: 75,
+              width: 275,
               child: TextField(
                 controller: _password,
                 autocorrect: false,
                 enableSuggestions: false,
                 obscureText: isPassword,
                 decoration: InputDecoration(
+                  icon: const Icon(Icons.password),
                   border: const OutlineInputBorder(),
                   labelText: 'Password',
                   suffixIcon: IconButton(
@@ -113,6 +116,11 @@ class _RegisterViewState extends State<RegisterView> {
                       await showErrorDialog(
                         context,
                         'Invalid email',
+                      );
+                    } else if (e.code == 'channel-error') {
+                      await showErrorDialog(
+                        context,
+                        'Please enter your login credentials',
                       );
                     } else {
                       await showErrorDialog(

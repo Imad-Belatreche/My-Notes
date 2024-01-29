@@ -5,7 +5,6 @@ import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/utilities/show_error_dialog.dart';
 
 bool isPassword = true;
-bool isVerified = FirebaseAuth.instance.currentUser!.emailVerified;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -45,8 +44,8 @@ class _LoginViewState extends State<LoginView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 80,
-              width: 250,
+              height: 75,
+              width: 275,
               child: TextField(
                 controller: _email,
                 autocorrect: false,
@@ -54,12 +53,13 @@ class _LoginViewState extends State<LoginView> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
+                  icon: Icon(Icons.email),
                   labelText: 'Email',
                 ),
               ),
             ),
             SizedBox(
-              width: 250,
+              width: 275,
               child: TextField(
                 controller: _password,
                 autocorrect: false,
@@ -68,6 +68,7 @@ class _LoginViewState extends State<LoginView> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   labelText: 'Password',
+                  icon: const Icon(Icons.password),
                   suffixIcon: IconButton(
                     onPressed: () {
                       setState(() {
@@ -90,11 +91,14 @@ class _LoginViewState extends State<LoginView> {
                     email: email,
                     password: password,
                   );
+                  final user = FirebaseAuth.instance.currentUser;
                   if (!context.mounted) return;
 
-                  if (isVerified) {
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil(notesRoute, (routes) => false);
+                  if (user?.emailVerified ?? false) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      notesRoute,
+                      (routes) => false,
+                    );
                   } else {
                     showDialog(
                       context: context,
@@ -148,6 +152,11 @@ class _LoginViewState extends State<LoginView> {
                     await showErrorDialog(
                       context,
                       'Network request failed, please connect to intrnet and try again',
+                    );
+                  } else if (e.code == 'channel-error') {
+                    await showErrorDialog(
+                      context,
+                      'Please enter your login credentials',
                     );
                   } else {
                     await showErrorDialog(
