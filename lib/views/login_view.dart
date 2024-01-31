@@ -1,7 +1,7 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/services/auth/auth_exceptions.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/utilities/show_error_dialog.dart';
 
 bool isPassword = true;
@@ -87,14 +87,14 @@ class _LoginViewState extends State<LoginView> {
                 final email = _email.text;
                 final password = _password.text;
                 try {
-                  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  await AuthService.firebase().logIn(
                     email: email,
                     password: password,
                   );
-                  final user = FirebaseAuth.instance.currentUser;
+                  final user = AuthService.firebase().currentUser;
                   if (!context.mounted) return;
 
-                  if (user?.emailVerified ?? false) {
+                  if (user?.isEmailVerified ?? false) {
                     Navigator.of(context).pushNamedAndRemoveUntil(
                       notesRoute,
                       (routes) => false,
@@ -111,7 +111,7 @@ class _LoginViewState extends State<LoginView> {
                           actions: [
                             TextButton(
                               onPressed: () async {
-                                await FirebaseAuth.instance.currentUser!
+                                await AuthService.firebase()
                                     .sendEmailVerification();
                               },
                               child: const Text('Send'),
@@ -121,56 +121,46 @@ class _LoginViewState extends State<LoginView> {
                       },
                     );
                   }
-                } on FirebaseAuthException catch (e) {
-                  if (!context.mounted) return;
-                  if (e.code == 'invalid-email') {
-                    await showErrorDialog(
-                      context,
-                      'Invalid email',
-                    );
-                  } else if (e.code == 'user-disabled') {
-                    await showErrorDialog(
-                      context,
-                      'This account is disabled',
-                    );
-                  } else if (e.code == 'user-not-found') {
-                    await showErrorDialog(
-                      context,
-                      'User not found',
-                    );
-                  } else if (e.code == 'wrong-password') {
-                    await showErrorDialog(
-                      context,
-                      'Wrong password',
-                    );
-                  } else if (e.code == 'invalid-credential') {
-                    await showErrorDialog(
-                      context,
-                      'Invalid credential, please check that your email and password are correct',
-                    );
-                  } else if (e.code == 'network-request-failed') {
-                    await showErrorDialog(
-                      context,
-                      'Network request failed, please connect to intrnet and try again',
-                    );
-                  } else if (e.code == 'channel-error') {
-                    await showErrorDialog(
-                      context,
-                      'Please enter your login credentials',
-                    );
-                  } else {
-                    await showErrorDialog(
-                      context,
-                      'Oops... an expected error happend, please try again later (${e.code})',
-                    );
-                    log(e.code);
-                  }
-                } catch (e) {
+                } on UserNotFoundAuthException {
                   await showErrorDialog(
                     context,
-                    e.toString(),
+                    'User not found',
                   );
-                  log(e.toString());
+                } on InvalidEmailAuthException {
+                  await showErrorDialog(
+                    context,
+                    'Invalid email',
+                  );
+                } on UserDisabledAuthException {
+                  await showErrorDialog(
+                    context,
+                    'This account is disabled',
+                  );
+                } on WrongPasswordAuthException {
+                  await showErrorDialog(
+                    context,
+                    'Wrong password',
+                  );
+                } on InvalidCredentialAuthException {
+                  await showErrorDialog(
+                    context,
+                    'Invalid credential, please check that your email and password are correct',
+                  );
+                } on NetworkRequestFailedAuthException {
+                  await showErrorDialog(
+                    context,
+                    'Network request failed, please connect to intrnet and try again',
+                  );
+                } on ChannelErrorAuthException {
+                  await showErrorDialog(
+                    context,
+                    'Please enter your login credentials',
+                  );
+                } on GeniricAuthException {
+                  await showErrorDialog(
+                    context,
+                    'Oops... an expected error happend, please try again later (Authentication error)',
+                  );
                 }
               },
               child: const Text('Login'),

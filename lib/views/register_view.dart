@@ -1,7 +1,7 @@
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/services/auth/auth_exceptions.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/utilities/show_error_dialog.dart';
 
 bool isPassword = true;
@@ -88,7 +88,7 @@ class _RegisterViewState extends State<RegisterView> {
                   final email = _email.text;
                   final password = _password.text;
                   try {
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                    await AuthService.firebase().createUser(
                       email: email,
                       password: password,
                     );
@@ -96,43 +96,33 @@ class _RegisterViewState extends State<RegisterView> {
                     Navigator.of(context).pushNamed(
                       emailVerifyRoute,
                     );
-
-                    final user = FirebaseAuth.instance.currentUser;
-                    await user?.sendEmailVerification();
-                  } on FirebaseAuthException catch (e) {
+                    
+                    await AuthService.firebase().sendEmailVerification();
                     if (!context.mounted) return;
-
-                    if (e.code == 'email-already-in-use') {
-                      await showErrorDialog(
-                        context,
-                        'Email already in use',
-                      );
-                    } else if (e.code == 'weak-password') {
-                      await showErrorDialog(
-                        context,
-                        'Weak password',
-                      );
-                    } else if (e.code == 'invalid-email') {
-                      await showErrorDialog(
-                        context,
-                        'Invalid email',
-                      );
-                    } else if (e.code == 'channel-error') {
-                      await showErrorDialog(
-                        context,
-                        'Please enter your login credentials',
-                      );
-                    } else {
-                      await showErrorDialog(
-                        context,
-                        'Oops... an expected error happend, please try again later (${e.code})',
-                      );
-                    }
-                  } catch (e) {
-                    if (!context.mounted) return;
-                    showErrorDialog(
+                  } on EmailAlreadyInUseAuthException {
+                    await showErrorDialog(
                       context,
-                      e.toString(),
+                      'Email already in use',
+                    );
+                  } on WeakPasswordAuthException {
+                    await showErrorDialog(
+                      context,
+                      'Weak password',
+                    );
+                  } on ChannelErrorAuthException {
+                    await showErrorDialog(
+                      context,
+                      'Please enter your login credentials',
+                    );
+                  } on InvalidEmailAuthException {
+                    await showErrorDialog(
+                      context,
+                      'Invalid email',
+                    );
+                  } on GeniricAuthException {
+                    await showErrorDialog(
+                      context,
+                      'Oops... an expected error happend, please try again later (Failed to register)',
                     );
                   }
                 },
