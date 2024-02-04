@@ -79,6 +79,7 @@ class _NewNoteViewState extends State<NewNoteView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           'New Note',
           style: TextStyle(color: Colors.white, fontSize: 25),

@@ -22,15 +22,10 @@ class _NotesViewState extends State<NotesView> {
   }
 
   @override
-  void dispose() {
-    _notesService.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           'Your Notes',
           style: TextStyle(color: Colors.white, fontSize: 25),
@@ -43,11 +38,9 @@ class _NotesViewState extends State<NotesView> {
             },
             icon: const Icon(
               Icons.add,
-              color: Colors.white,
             ),
           ),
           PopupMenuButton<MenuAction>(
-            iconColor: Colors.white,
             color: Colors.white,
             onSelected: (value) async {
               switch (value) {
@@ -62,10 +55,7 @@ class _NotesViewState extends State<NotesView> {
                     );
                   }
                 case MenuAction.settings:
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    settingsRoute,
-                    (routes) => false,
-                  );
+                  Navigator.of(context).pushNamed(settingsRoute);
                 default:
               }
             },
@@ -76,9 +66,8 @@ class _NotesViewState extends State<NotesView> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(Icons.logout, color: Colors.deepPurple),
-                      Text('Log Out',
-                          style: TextStyle(color: Colors.deepPurple)),
+                      Icon(Icons.logout, color: Colors.black),
+                      Text('Log Out', style: TextStyle(color: Colors.black)),
                     ],
                   ),
                 ),
@@ -87,9 +76,8 @@ class _NotesViewState extends State<NotesView> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(Icons.settings, color: Colors.deepPurple),
-                        Text('Settings',
-                            style: TextStyle(color: Colors.deepPurple)),
+                        Icon(Icons.settings, color: Colors.black),
+                        Text('Settings', style: TextStyle(color: Colors.black)),
                       ],
                     ))
               ];
@@ -108,13 +96,25 @@ class _NotesViewState extends State<NotesView> {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                     case ConnectionState.active:
-                      return Container(
-                        alignment: Alignment.center,
-                        child: const Text(
-                          'Waiting for all notes. . .\n',
-                        ),
-                      );
-
+                      if (snapshot.hasData) {
+                        final allNotes = snapshot.data as List<DatabaseNote>;
+                        return ListView.builder(
+                          itemCount: allNotes.length,
+                          itemBuilder: (context, index) {
+                            final note = allNotes[index];
+                            return ListTile(
+                              title: Text(
+                                note.text,
+                                maxLines: 1,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return const Center(child: CircularProgressIndicator());
+                      }
                     default:
                       return const CircularProgressIndicator();
                   }
