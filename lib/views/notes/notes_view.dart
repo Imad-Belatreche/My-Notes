@@ -107,17 +107,14 @@ class _NotesViewState extends State<NotesView> {
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
+                    case ConnectionState.active:
                       return Container(
                         alignment: Alignment.center,
-                        child: const Column(
-                          children: [
-                            Text(
-                              'Waiting for data\n',
-                            ),
-                            CircularProgressIndicator(),
-                          ],
+                        child: const Text(
+                          'Waiting for all notes. . .\n',
                         ),
                       );
+
                     default:
                       return const CircularProgressIndicator();
                   }
