@@ -33,7 +33,7 @@ class NotesService {
         if (currentUser != null) {
           return note.userId == currentUser.id;
         } else {
-          throw UserShouldBeSetBeforeReadingAllNotes();
+          throw UserShouldBeSetBeforeReadingAllNotesException();
         }
       });
 
@@ -64,7 +64,7 @@ class NotesService {
     );
 
     if (updateCount == 0) {
-      throw CouldNotUpdateNote();
+      throw CouldNotUpdateNoteException();
     } else {
       final updatedNote = await getNote(id: note.id);
       _notes.removeWhere((note) => note.id == updatedNote.id);
@@ -84,7 +84,7 @@ class NotesService {
         _user = user;
       }
       return user;
-    } on CouldNotFindUser {
+    } on CouldNotFindUserException {
       final createdUser = await createUser(email: email);
       if (setAsCurrentUser) {
         _user = createdUser;
@@ -98,7 +98,7 @@ class NotesService {
   Future<void> _ensureDbIsOpen() async {
     try {
       await open();
-    } on DatabaseIsAlreadyOpen {
+    } on DatabaseIsAlreadyOpenException {
       // Do nothing - this exception is expected when the database is already opened.
     }
   }
@@ -122,7 +122,7 @@ class NotesService {
       limit: 1,
     );
     if (notes.isEmpty) {
-      throw CouldNotFindNote();
+      throw CouldNotFindNoteException();
     } else {
       final note = DatabaseNote.fromRow(notes.first);
       _notes.removeWhere((note) => note.id == id);
@@ -151,7 +151,7 @@ class NotesService {
       whereArgs: [id],
     );
     if (deletedCount == 0) {
-      throw CouldNotDeleteNote();
+      throw CouldNotDeleteNoteException();
     } else {
       _notes.removeWhere((note) => note.id == id);
       _notesStreamController.add(_notes);
@@ -166,7 +166,7 @@ class NotesService {
     // Confirm that the owner exists with the correct id
     final dbUser = await getUser(email: owner.email);
     if (dbUser != owner) {
-      throw CouldNotFindUser();
+      throw CouldNotFindUserException();
     }
 
     const text = '';
@@ -198,7 +198,7 @@ class NotesService {
       limit: 1,
     );
     if (result.isEmpty) {
-      throw CouldNotFindUser();
+      throw CouldNotFindUserException();
     } else {
       return DatabaseUser.fromRow(result.first);
     }
@@ -210,7 +210,7 @@ class NotesService {
     final deletedCount = await db.delete(userTable,
         where: 'email = ?', whereArgs: [email.toLowerCase()]);
     if (deletedCount != 1) {
-      throw CouldNotDeleteUser();
+      throw CouldNotDeleteUserException();
     }
   }
 
@@ -222,7 +222,7 @@ class NotesService {
       email.toLowerCase(),
     ]);
     if (result.isNotEmpty) {
-      throw UserAlreadyExists();
+      throw UserAlreadyExistsException();
     }
     final userId = await db.insert(
       userTable,
@@ -234,14 +234,14 @@ class NotesService {
   Database _getDatabaseOrThrow() {
     final db = _db;
     if (db == null) {
-      throw DatabaseIsAlreadyClose();
+      throw DatabaseIsAlreadyCloseException();
     } else {
       return db;
     }
   }
 
   Future<void> open() async {
-    if (_db != null) throw DatabaseIsAlreadyOpen();
+    if (_db != null) throw DatabaseIsAlreadyOpenException();
     try {
       final docsPath = await getApplicationDocumentsDirectory();
       final dbPath = join(docsPath.path, dbName);
@@ -253,13 +253,13 @@ class NotesService {
       await db.execute(createNoteTable);
       await _cacheNotes();
     } on MissingPlatformDirectoryException {
-      throw UnableToFindDocumentsDirectory();
+      throw UnableToFindDocumentsDirectoryException();
     }
   }
 
   Future<void> close() async {
     final db = _db;
-    if (db == null) throw DatabaseIsAlreadyClose();
+    if (db == null) throw DatabaseIsAlreadyCloseException();
     await db.close();
     _db = null;
   }
