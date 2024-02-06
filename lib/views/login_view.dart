@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
-import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/utilities/dialogs/error_dialog.dart';
 
 bool isPassword = true;
@@ -87,40 +88,47 @@ class _LoginViewState extends State<LoginView> {
                 final email = _email.text;
                 final password = _password.text;
                 try {
-                  await AuthService.firebase().logIn(
-                    email: email,
-                    password: password,
-                  );
-                  final user = AuthService.firebase().currentUser;
-                  if (!context.mounted) return;
+                  context.read<AuthBloc>().add(
+                        AuthEventLogIn(
+                          email: email,
+                          password: password,
+                        ),
+                      );
 
-                  if (user?.isEmailVerified ?? false) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      notesRoute,
-                      (routes) => false,
-                    );
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Wait'),
-                          content: const Text(
-                            'Your Email is not verified yet. Check your email for a verification or click to send a new one',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () async {
-                                await AuthService.firebase()
-                                    .sendEmailVerification();
-                              },
-                              child: const Text('Send'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
+                  // await AuthService.firebase().logIn(
+                  //   email: email,
+                  //   password: password,
+                  // );
+                  // final user = AuthService.firebase().currentUser;
+                  // if (!context.mounted) return;
+
+                  // if (user?.isEmailVerified ?? false) {
+                  //   Navigator.of(context).pushNamedAndRemoveUntil(
+                  //     notesRoute,
+                  //     (routes) => false,
+                  //   );
+                  // } else {
+                  //   showDialog(
+                  //     context: context,
+                  //     builder: (BuildContext context) {
+                  //       return AlertDialog(
+                  //         title: const Text('Wait'),
+                  //         content: const Text(
+                  //           'Your Email is not verified yet. Check your email for a verification or click to send a new one',
+                  //         ),
+                  //         actions: [
+                  //           TextButton(
+                  //             onPressed: () async {
+                  //               await AuthService.firebase()
+                  //                   .sendEmailVerification();
+                  //             },
+                  //             child: const Text('Send'),
+                  //           ),
+                  //         ],
+                  //       );
+                  //     },
+                  //   );
+                  // }
                 } on UserNotFoundAuthException {
                   await showErrorDialog(
                     context,
