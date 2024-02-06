@@ -6,7 +6,6 @@ import 'package:mynotes/services/cloud/firebase_cloud_storage.dart';
 import 'package:mynotes/enums/menu_action.dart';
 import 'package:mynotes/utilities/dialogs/logout_dialog.dart';
 import 'package:mynotes/views/notes/notes_list_view.dart';
-import 'package:share_plus/share_plus.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
