@@ -83,95 +83,67 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
             ),
-            TextButton(
-              onPressed: () async {
-                final email = _email.text;
-                final password = _password.text;
-                try {
+            BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) async {
+                if (state is AuthStateLoggedOut) {
+                  if (state.exception is UserNotFoundAuthException) {
+                    await showErrorDialog(
+                      context,
+                      'User not found',
+                    );
+                  } else if (state.exception is InvalidEmailAuthException) {
+                    await showErrorDialog(
+                      context,
+                      'Invalid email',
+                    );
+                  } else if (state.exception is UserDisabledAuthException) {
+                    await showErrorDialog(
+                      context,
+                      'This account is disabled',
+                    );
+                  } else if (state.exception is WrongPasswordAuthException) {
+                    await showErrorDialog(
+                      context,
+                      'Wrong password',
+                    );
+                  } else if (state.exception
+                      is InvalidCredentialAuthException) {
+                    await showErrorDialog(
+                      context,
+                      'Invalid credential, please check that your email and password are correct',
+                    );
+                  } else if (state.exception
+                      is NetworkRequestFailedAuthException) {
+                    await showErrorDialog(
+                      context,
+                      'Network request failed, please connect to intrnet and try again',
+                    );
+                  } else if (state.exception is ChannelErrorAuthException) {
+                    await showErrorDialog(
+                      context,
+                      'Please enter your login credentials',
+                    );
+                  } else {
+                    await showErrorDialog(
+                      context,
+                      'Oops... an expected error happend, please try again later (Authentication error)',
+                    );
+                  }
+                }
+              },
+              child: TextButton(
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
                   context.read<AuthBloc>().add(
                         AuthEventLogIn(
                           email: email,
                           password: password,
                         ),
                       );
-
-                  // await AuthService.firebase().logIn(
-                  //   email: email,
-                  //   password: password,
-                  // );
-                  // final user = AuthService.firebase().currentUser;
-                  // if (!context.mounted) return;
-
-                  // if (user?.isEmailVerified ?? false) {
-                  //   Navigator.of(context).pushNamedAndRemoveUntil(
-                  //     notesRoute,
-                  //     (routes) => false,
-                  //   );
-                  // } else {
-                  //   showDialog(
-                  //     context: context,
-                  //     builder: (BuildContext context) {
-                  //       return AlertDialog(
-                  //         title: const Text('Wait'),
-                  //         content: const Text(
-                  //           'Your Email is not verified yet. Check your email for a verification or click to send a new one',
-                  //         ),
-                  //         actions: [
-                  //           TextButton(
-                  //             onPressed: () async {
-                  //               await AuthService.firebase()
-                  //                   .sendEmailVerification();
-                  //             },
-                  //             child: const Text('Send'),
-                  //           ),
-                  //         ],
-                  //       );
-                  //     },
-                  //   );
-                  // }
-                } on UserNotFoundAuthException {
-                  await showErrorDialog(
-                    context,
-                    'User not found',
-                  );
-                } on InvalidEmailAuthException {
-                  await showErrorDialog(
-                    context,
-                    'Invalid email',
-                  );
-                } on UserDisabledAuthException {
-                  await showErrorDialog(
-                    context,
-                    'This account is disabled',
-                  );
-                } on WrongPasswordAuthException {
-                  await showErrorDialog(
-                    context,
-                    'Wrong password',
-                  );
-                } on InvalidCredentialAuthException {
-                  await showErrorDialog(
-                    context,
-                    'Invalid credential, please check that your email and password are correct',
-                  );
-                } on NetworkRequestFailedAuthException {
-                  await showErrorDialog(
-                    context,
-                    'Network request failed, please connect to intrnet and try again',
-                  );
-                } on ChannelErrorAuthException {
-                  await showErrorDialog(
-                    context,
-                    'Please enter your login credentials',
-                  );
-                } on GeniricAuthException {
-                  await showErrorDialog(
-                    context,
-                    'Oops... an expected error happend, please try again later (Authentication error)',
-                  );
-                }
-              },
-              child: const Text('Login'),
+                },
+                child: const Text('Login'),
+              ),
             ),
             TextButton(
               onPressed: () {
