@@ -4,6 +4,7 @@ import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/views/email_verification_view.dart';
 import 'package:mynotes/views/login_view.dart';
 import 'package:mynotes/views/notes/notes_view.dart';
+import 'package:mynotes/views/register_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,6 +25,8 @@ class _HomePageState extends State<HomePage> {
           return const EmailVerificationView();
         } else if (state is AuthStateLoggedOut) {
           return const LoginView();
+        } else if (state is AuthStateRegistering) {
+          return const RegisterView();
         } else {
           return const Scaffold(
             body: CircularProgressIndicator(),
