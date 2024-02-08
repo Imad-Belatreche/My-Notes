@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/utilities/dialogs/error_dialog.dart';
+import 'package:mynotes/utilities/dialogs/generic_dialog.dart';
 
 bool isPassword = true;
 
@@ -16,11 +17,13 @@ class RegisterView extends StatefulWidget {
 class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  late final TextEditingController _passwordConfirm;
 
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+    _passwordConfirm = TextEditingController();
     super.initState();
   }
 
@@ -28,6 +31,7 @@ class _RegisterViewState extends State<RegisterView> {
   void dispose() {
     _email.dispose();
     _password.dispose();
+    _passwordConfirm.dispose();
     super.dispose();
   }
 
@@ -66,17 +70,44 @@ class _RegisterViewState extends State<RegisterView> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Register'),
+          title: const Text(
+            'Register',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           centerTitle: true,
+          backgroundColor: Colors.deepPurple,
         ),
         body: Container(
           alignment: Alignment.center,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 75,
-                width: 275,
+              const Padding(
+                padding: EdgeInsets.fromLTRB(
+                  10,
+                  15,
+                  10,
+                  10,
+                ),
+                child: Text(
+                  'Enter you credentials to create a new account',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      wordSpacing: -4),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  16,
+                  10,
+                  16,
+                  10,
+                ),
                 child: TextField(
                   controller: _email,
                   autocorrect: false,
@@ -89,9 +120,13 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 75,
-                width: 275,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  16,
+                  10,
+                  16,
+                  10,
+                ),
                 child: TextField(
                   controller: _password,
                   autocorrect: false,
@@ -114,28 +149,47 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  56,
+                  2,
+                  16,
+                  10,
+                ),
+                child: TextField(
+                  controller: _passwordConfirm,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  obscureText: isPassword,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Confirm password',
+                  ),
+                ),
+              ),
               TextButton(
                   onPressed: () async {
                     final email = _email.text;
-                    final password = _password.text;
-                    context.read<AuthBloc>().add(
-                          AuthEventRegister(
-                            email,
-                            password,
-                          ),
-                        );
-                    //   try {
-                    //     await AuthService.firebase().createUser(
-                    //       email: email,
-                    //       password: password,
-                    //     );
-                    //     if (!context.mounted) return;
-                    //     Navigator.of(context).pushNamed(
-                    //       emailVerifyRoute,
-                    //     );
-
-                    //     await AuthService.firebase().sendEmailVerification();
-                    //     if (!context.mounted) return;
+                    if (_password.text == _passwordConfirm.text) {
+                      final password = _password.text;
+                      context.read<AuthBloc>().add(
+                            AuthEventRegister(
+                              email,
+                              password,
+                            ),
+                          );
+                    } else {
+                      _password.clear();
+                      _passwordConfirm.clear();
+                      showGeniricDialog(
+                        context: context,
+                        title: 'Register',
+                        content: 'Please confirm your password',
+                        optionBuilder: () => {
+                          'OK': null,
+                        },
+                      );
+                    }
                   },
                   child: const Text('Register')),
               TextButton(

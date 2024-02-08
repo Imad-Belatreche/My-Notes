@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/firebase_auth_provider.dart';
@@ -14,6 +15,7 @@ void main() {
       title: 'My Notes',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'FiraCode',
       ),
       home: BlocProvider<AuthBloc>(
         create: (context) => AuthBloc(FirebaseAuthProvider()),
@@ -39,14 +41,15 @@ class _ConnectonDoneState extends State<ConnectonDone> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-          child: Text(
-        'Connection Done Successfully',
-        style: TextStyle(
-          color: Colors.white,
-          fontFamily: 'JetBrains Mono',
-          fontSize: 25,
+        child: Text(
+          'Connection Done Successfully',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'JetBrains Mono',
+            fontSize: 25,
+          ),
         ),
-      )),
+      ),
       backgroundColor: Colors.deepPurple,
     );
   }

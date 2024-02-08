@@ -16,29 +16,40 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
       listener: (context, state) {},
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Verify your email to continue'),
-        ),
-        body: Column(
-          children: [
-            const Text(
-                " We'v sent you an email verification. Please open it to verify your account"),
-            const Text(
-                "If you haven't received the verification email. Click here"),
-            TextButton(
-              onPressed: () {
-                context
-                    .read<AuthBloc>()
-                    .add(const AuthEventSendEmailVerification());
-              },
-              child: const Text('Send email verification'),
+          title: const Text(
+            'Verify your email to continue',
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
             ),
-            TextButton(
-              onPressed: () {
-                context.read<AuthBloc>().add(const AuthEventLogOut());
-              },
-              child: const Text('Restart'),
-            )
-          ],
+          ),
+          backgroundColor: Colors.deepPurple,
+          centerTitle: true,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Text(
+                  'We have sent you an email verification. Please open it to verify your account'),
+              const Text(
+                  'If you have not received the verification email. Click here'),
+              TextButton(
+                onPressed: () {
+                  context
+                      .read<AuthBloc>()
+                      .add(const AuthEventSendEmailVerification());
+                },
+                child: const Text('Send email verification'),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthEventLogOut());
+                },
+                child: const Text('Go back'),
+              )
+            ],
+          ),
         ),
       ),
     );

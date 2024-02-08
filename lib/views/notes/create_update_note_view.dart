@@ -94,9 +94,10 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
-          'What are you thinking...',
-          style: TextStyle(color: Colors.white, fontSize: 25),
+          "What's in your mind?",
+          style: TextStyle(color: Colors.white, fontSize: 20),
         ),
+        centerTitle: true,
         backgroundColor: Colors.deepPurple,
         actions: [
           IconButton(
@@ -117,15 +118,46 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
               _setupTextControllerListener();
-              return TextField(
-                controller: _textController,
-                keyboardType: TextInputType.multiline,
-                autocorrect: true,
-                showCursor: true,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  hintText: 'Start typing your note . . .',
-                  border: OutlineInputBorder(),
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _textController,
+                      keyboardType: TextInputType.multiline,
+                      autocorrect: true,
+                      showCursor: true,
+                      maxLines: 10,
+                      decoration: const InputDecoration(
+                        hintText: 'Start typing your note . . .',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton(
+                              onPressed: () {
+                                _textController.clear();
+                              },
+                              child: const Text(
+                                'Erase',
+                              )),
+                        ),
+                        Container(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              _saveNoteIfTextIsNotEmpty();
+                            },
+                            child: const Text('Save'),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               );
             default:

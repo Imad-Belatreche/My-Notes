@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/utilities/dialogs/error_dialog.dart';
-import 'package:mynotes/utilities/dialogs/loading_dialog.dart';
 
 bool isPassword = true;
 
@@ -40,7 +39,7 @@ class _LoginViewState extends State<LoginView> {
           if (state.exception is UserNotFoundAuthException) {
             await showErrorDialog(
               context,
-              'User not found',
+              'Cannot find a user with the entered credentials !',
             );
           } else if (state.exception is InvalidEmailAuthException) {
             await showErrorDialog(
@@ -82,17 +81,44 @@ class _LoginViewState extends State<LoginView> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Login'),
+          title: const Text(
+            'Login',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           centerTitle: true,
+          backgroundColor: Colors.deepPurple,
         ),
         body: Container(
           alignment: Alignment.center,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 75,
-                width: 275,
+              const Padding(
+                padding: EdgeInsets.fromLTRB(
+                  10,
+                  15,
+                  10,
+                  13,
+                ),
+                child: Text(
+                  'Welcome to My Notes',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  16,
+                  10,
+                  16,
+                  10,
+                ),
                 child: TextField(
                   controller: _email,
                   autocorrect: false,
@@ -105,8 +131,8 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
               ),
-              SizedBox(
-                width: 275,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
                 child: TextField(
                   controller: _password,
                   autocorrect: false,
@@ -141,6 +167,12 @@ class _LoginViewState extends State<LoginView> {
                       );
                 },
                 child: const Text('Login'),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthEventForgotPassword());
+                },
+                child: const Text('Forget your password?'),
               ),
               TextButton(
                 onPressed: () {
