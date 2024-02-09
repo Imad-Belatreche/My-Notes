@@ -162,5 +162,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ));
       }
     });
+    on<AuthEventSaveNote>((event, emit) {
+      emit(const AuthStateSavingNote(
+        isLoading: false,
+      ));
+    });
   }
 }

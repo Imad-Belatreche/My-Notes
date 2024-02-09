@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
         }
       },
       builder: (context, state) {
-        if (state is AuthStateLoggedIn) {
+        if (state is AuthStateLoggedIn || state is AuthStateSavingNote) {
           return const NotesView();
         } else if (state is AuthStateNeedsVerification) {
           return const EmailVerificationView();
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
           return const ForgotPasswordView();
         } else {
           return const Scaffold(
-            body: CircularProgressIndicator(),
+            body: Center(child: CircularProgressIndicator()),
           );
         }
       },

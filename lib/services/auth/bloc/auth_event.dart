@@ -38,3 +38,8 @@ class AuthEventForgotPassword extends AuthEvent {
 
   const AuthEventForgotPassword({this.email});
 }
+
+class AuthEventSaveNote extends AuthEvent {
+  final String note;
+  const AuthEventSaveNote(this.note);
+}
