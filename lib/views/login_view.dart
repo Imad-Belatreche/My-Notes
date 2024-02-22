@@ -91,98 +91,103 @@ class _LoginViewState extends State<LoginView> {
           centerTitle: true,
           backgroundColor: Colors.deepPurple,
         ),
-        body: Container(
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(
-                  10,
-                  15,
-                  10,
-                  13,
-                ),
-                child: Text(
-                  'Welcome to My Notes',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
+        body: SingleChildScrollView(
+          child: Container(
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    10,
+                    15,
+                    10,
+                    13,
+                  ),
+                  child: Text(
+                    'Welcome to My Notes',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  16,
-                  10,
-                  16,
-                  10,
-                ),
-                child: TextField(
-                  controller: _email,
-                  autocorrect: false,
-                  enableSuggestions: false,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    icon: Icon(Icons.email),
-                    labelText: 'Email',
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    16,
+                    10,
+                    16,
+                    10,
+                  ),
+                  child: TextField(
+                    controller: _email,
+                    autocorrect: false,
+                    enableSuggestions: false,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      icon: Icon(Icons.email),
+                      labelText: 'Email',
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-                child: TextField(
-                  controller: _password,
-                  autocorrect: false,
-                  enableSuggestions: false,
-                  obscureText: isPassword,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: 'Password',
-                    icon: const Icon(Icons.password),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isPassword = !isPassword;
-                        });
-                      },
-                      icon: Icon(
-                        isPassword ? Icons.visibility : Icons.visibility_off,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+                  child: TextField(
+                    controller: _password,
+                    autocorrect: false,
+                    enableSuggestions: false,
+                    obscureText: isPassword,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: 'Password',
+                      icon: const Icon(Icons.password),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            isPassword = !isPassword;
+                          });
+                        },
+                        icon: Icon(
+                          isPassword ? Icons.visibility : Icons.visibility_off,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              TextButton(
-                onPressed: () async {
-                  final email = _email.text;
-                  final password = _password.text;
-                  context.read<AuthBloc>().add(
-                        AuthEventLogIn(
-                          email: email,
-                          password: password,
-                        ),
-                      );
-                },
-                child: const Text('Login'),
-              ),
-              TextButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(const AuthEventForgotPassword());
-                },
-                child: const Text('Forget your password?'),
-              ),
-              TextButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(
-                        const AuthEventShouldRegister(),
-                      );
-                },
-                child: const Text('Not registerd yet? Click here to register'),
-              ),
-            ],
+                TextButton(
+                  onPressed: () async {
+                    final email = _email.text;
+                    final password = _password.text;
+                    context.read<AuthBloc>().add(
+                          AuthEventLogIn(
+                            email: email,
+                            password: password,
+                          ),
+                        );
+                  },
+                  child: const Text('Login'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    context
+                        .read<AuthBloc>()
+                        .add(const AuthEventForgotPassword());
+                  },
+                  child: const Text('Forget your password?'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(
+                          const AuthEventShouldRegister(),
+                        );
+                  },
+                  child:
+                      const Text('Not registerd yet? Click here to register'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
